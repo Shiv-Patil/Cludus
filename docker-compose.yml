@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+
+  bot:
+    build:
+      context: cludus
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      DASHBORD_URL: "http://dashboard:3000/"
+    networks:
+      - default
+
+  dashboard:
+    build:
+      context: dashboard
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+    networks:
+      - default
+
+networks:
+  default:
