@@ -1,5 +1,28 @@
 {
-  "dependencies": {
-    "axios": "^0.21.1"
-  }
+    "dependencies": {
+        "@discordjs/rest": "^0.2.0-canary.0",
+        "axios": "^0.21.1",
+        "canvas": "^2.8.0",
+        "discord-api-types": "^0.26.1",
+        "discord.js": "^13.0.0",
+        "dotenv": "^10.0.0"
+    },
+    "name": "cludus",
+    "description": "A sci-fi rpg-based discord bot",
+    "version": "0.1.0",
+    "main": "main.js",
+    "scripts": {
+        "dev": "NODE_ENV=development && node ./main.js",
+        "production": "NODE_ENV=production && node ./main.js",
+        "deploy": "node ./deploy_commands.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Shiv-Patil/Cludus.git"
+    },
+    "author": "krymzin",
+    "license": "UNLICENSED",
+    "bugs": {
+        "url": "https://github.com/Shiv-Patil/Cludus/issues"
+    }
 }
