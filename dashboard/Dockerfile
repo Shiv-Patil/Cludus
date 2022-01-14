@@ -5,11 +5,13 @@ FROM golang:1.17-alpine AS backend
 
 WORKDIR /app
 
-RUN mkdir backend
-COPY backend/go.mod backend/
-COPY backend/go.sum backend/
-
-RUN cd backend && go mod download -x
+# Install dependencies
+COPY backend/go.* backend/
+COPY backend/routes/go.* backend/routes/
+COPY backend/middleware/go.* backend/middleware/
+COPY backend/utils/go.* backend/utils/
+COPY backend/db/go.* backend/db/
+RUN cd backend && go mod download
 
 COPY backend/ backend/
 
@@ -38,4 +40,4 @@ WORKDIR /app
 COPY --from=backend /app/backend/main ./backend/
 COPY --from=frontend /app/frontend/build ./frontend/build
 
-CMD ["/app/backend/main"]
+CMD ["/app/backend/main", "runserver"]

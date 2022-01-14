@@ -5,4 +5,4 @@ docker_run_dashboard:
 run_dashboard:
 	cd dashboard/frontend && npm run build
 	cd dashboard/backend && go build .
-	cd dashboard && backend/main
+	cd dashboard && backend/main runserver
