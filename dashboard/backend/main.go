@@ -10,9 +10,9 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+    "github.com/go-chi/chi/v5"
 	"github.com/go-chi/httprate"
+    chiMiddleware "github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
@@ -25,10 +25,10 @@ func main() {
                 Action: func(c *cli.Context) error {
                     router := chi.NewRouter()
 
-                    router.Use(middleware.Heartbeat("/ping"))
-                    router.Use(middleware.Logger)
-                    router.Use(middleware.CleanPath)
-                    router.Use(middleware.Recoverer)
+                    router.Use(chiMiddleware.Heartbeat("/ping"))
+                    router.Use(chiMiddleware.Logger)
+                    router.Use(chiMiddleware.CleanPath)
+                    router.Use(chiMiddleware.Recoverer)
                     router.Use(httprate.LimitByIP(1000, 1 * time.Minute))
 
                     routes.AddRoutes(router)

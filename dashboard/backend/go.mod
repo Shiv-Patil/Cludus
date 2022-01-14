@@ -18,8 +18,8 @@ require (
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 )
 
-replace dashboard/middleware => ./middleware
+replace cludus/middleware => ./middleware
 
-replace dashboard/utils => ./utils
+replace cludus/utils => ./utils
 
-replace dashboard/db => ./db
+replace cludus/db => ./db
