@@ -9,8 +9,8 @@ if (!token) {
     throw new Error("Please set a client token in the env file.");
 }
 
-const clientId = "874982413917380638";
-const guildId = "847436129254113300";
+const clientId = process.env.CLIENT_ID;
+const guildId = process.env.GUILD_ID;
 
 const commands = [];
 const commandDirectories = fs.readdirSync(join(__dirname, "commands"));

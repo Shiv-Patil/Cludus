@@ -12,6 +12,8 @@ $ gh repo clone Shiv-Patil/Cludus
 2. Create a `.env` file in `cludus` and fill it out with -
 ```env
 DISCORD_CLIENT_TOKEN=
+CLIENT_ID=
+GUILD_ID=
 ```
 
 ### With Docker-Compose

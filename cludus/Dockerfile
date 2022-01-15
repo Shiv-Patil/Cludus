@@ -8,4 +8,6 @@ RUN npm ci
 
 COPY . .
 
+RUN npm run deploy
+
 CMD ["npm", "run", "dev"]
