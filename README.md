@@ -24,20 +24,32 @@ GUILD_ID=
 ### With Docker and Make
 
 3. Make sure you have Docker and Make in your path.
-4. Run the dashboard with `make docker_run_dashboard`.
-5. Run the bot with `make docker_run_bot`.
+4. Append the following to the `cludus/.env` file -
+```env
+DASHBOARD_URL=http://localhost:3000/
+```
+5. Paste the following into `dashboard/.env` -
+```
+MONGO_URL=...
+```
+6. Run the dashboard with `make docker_run_dashboard`.
+7. Run the bot with `make docker_run_bot`.
 
 ### With Docker
 
 3. Make sure you have Docker in your path.
-4. Build the dashboard with `cd dashboard && docker build . -t cludus_dashboard && cd ..`.
-5. Run the dashboard with `docker run -d -p 3000:3000 cludus_dashboard`.
-6. Append the following to the `cludus/.env` file - 
+4. Paste the following into `dashboard/.env` -
+```
+MONGO_URL=...
+```
+5. Build the dashboard with `cd dashboard && docker build . -t cludus_dashboard && cd ..`.
+6. Run the dashboard with `docker run -d -p 3000:3000 cludus_dashboard`.
+7. Append the following to the `cludus/.env` file - 
 ```env
 DASHBOARD_URL=http://localhost:3000/
 ```
-7. Build the bot with `cd cludus && docker build . -t cludus_bot && cd ..`.
-8. Run the bot with `cd cludus && docker run cludus_bot`.
+8. Build the bot with `cd cludus && docker build . -t cludus_bot && cd ..`.
+9. Run the bot with `cd cludus && docker run cludus_bot`.
 
 ### With Make
 3. Make sure you have make, golang, node.js, and npm in your path.
@@ -56,9 +68,13 @@ $ cd cludus
 $ npm ci
 $ cd ..
 ```
-6. Append the following to `cludus/.env` -
+6. Paste the following into `dashboard/.env` -
+```
+MONGO_URL=...
+```
+7. Append the following to `cludus/.env` -
 ```env
 DASHBOARD_URL=http://localhost:3000/
 ```
-7. Run the dashboard with `make run_dashboard`
-8. Run the bot with `make run_bot`
+8. Run the dashboard with `make run_dashboard`
+9. Run the bot with `make run_bot`
