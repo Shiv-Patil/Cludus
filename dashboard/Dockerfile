@@ -18,7 +18,7 @@ COPY backend/ backend/
 RUN cd backend && go build
 
 # Build frontend
-FROM node:17-alpine as frontend
+FROM node:17-slim as frontend
 
 WORKDIR /app
 

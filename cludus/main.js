@@ -17,15 +17,6 @@ const fs = require("fs");
 const { join } = require("path");
 require("dotenv").config();
 
-/* axios.get(process.env.DASHBORD_URL)
-    .then(response => {
-    console.log(response.data);
-})
-    .catch(error => {
-        console.log(error);
-    });
-*/
-
 // Client events of the discord api (ready, interactionCreate, etc.)
 const eventFiles = fs.readdirSync(join(__dirname, "api_events")).filter(file => file.endsWith(".js"));
 
