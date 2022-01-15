@@ -4,13 +4,18 @@ const fs = require("fs");
 const { join } = require("path");
 require("dotenv").config();
 
-const token = process.env.DISCORD_CLIENT_TOKEN;
-if (!token) {
-    throw new Error("Please set a client token in the env file.");
+if (process.argv.length === 2) {
+    console.error("Usage: deploy <guild/global>");
+    process.exit(1);
 }
 
+const token = process.env.DISCORD_CLIENT_TOKEN;
 const clientId = process.env.CLIENT_ID;
-const guildId = process.env.GUILD_ID;
+let guildId = process.env.GUILD_ID;
+
+if (!token || !clientId) {
+    throw new Error("Please check if all environment variables are set properly (DISCORD_CLIENT_TOKEN, CLIENT_ID).");
+}
 
 const commands = [];
 const commandDirectories = fs.readdirSync(join(__dirname, "commands"));
@@ -21,13 +26,13 @@ for (const cDirectory of commandDirectories) {  // Sub-directory to organise com
         commands.push(command.props);
     }
 }
-console.log(commands);
 
 const rest = new REST({ version: '9' }).setToken(token);
 
-const arg = process.argv[2];
+const type = process.argv[2].toLowerCase();
+guildId = process.argv[3] ? process.argv[3] : guildId;
 
-if (arg === "global") {
+if (type === "global") {
     console.log("Registering global commands...");
     (async () => {
         await rest.put(
@@ -39,19 +44,24 @@ if (arg === "global") {
             { body: commands },
         );
         console.log("Global commands registered.");
-    })();
-} else {
-    console.log("Registering guild commands...");
-    (async () => {
-        await rest.put(
-            Routes.applicationCommands(clientId, guildId),
-            { body: [] },
-        );
-        await rest.put(
-            Routes.applicationGuildCommands(clientId, guildId),
-            { body: commands },
-        );
-        console.log("Guild commands registered.");
-    })();
+    })().catch(e => console.log(e.message + "\n(Code " + e.code + ")"));
+} else if (type === "guild") {
+    if (!guildId) {
+        console.log("Please specify a guildId either as an argument or as an environment variable.")
+    }
+    else {
+        console.log("Registering guild commands for " + guildId + "...");
+        (async () => {
+            await rest.put(
+                Routes.applicationCommands(clientId, guildId),
+                { body: [] },
+            );
+            await rest.put(
+                Routes.applicationGuildCommands(clientId, guildId),
+                { body: commands },
+            );
+            console.log("Guild commands registered.");
+        })().catch(e => console.log(e.message + "\n(Code " + e.code + ")"));
+    }
 }
 

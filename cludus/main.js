@@ -23,7 +23,7 @@ const eventFiles = fs.readdirSync(join(__dirname, "api_events")).filter(file => 
 // Collections to store bot commands and command cooldowns
 client.commands = new Discord.Collection();
 client.cooldowns = new Discord.Collection();  // cooldowns: {command1: {user1: lastUsed, user2: lastUsed}, command2...}
-client.admins = [398061543373406208];
+client.admins = process.env.CLIENT_ADMINS ? process.env.CLIENT_ADMINS.split(',').map(x => x.trim()) : [];
 
 // Adds to client.commands by traversing the commands directory
 const commandDirectories = fs.readdirSync(join(__dirname, "commands"));
