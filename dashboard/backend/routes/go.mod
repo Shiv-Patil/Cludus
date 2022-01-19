@@ -2,11 +2,14 @@ module cludus/routes
 
 go 1.17
 
+replace cludus/db => ../db
+
+replace cludus/utils => ../utils
+
 require (
 	cludus/db v0.0.0-00010101000000-000000000000
 	cludus/utils v0.0.0-00010101000000-000000000000
 	github.com/go-chi/chi/v5 v5.0.7
-	github.com/imroc/req v0.3.2
 )
 
 require (
@@ -23,7 +26,3 @@ require (
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
 	golang.org/x/text v0.3.5 // indirect
 )
-
-replace cludus/db => ../db
-
-replace cludus/utils => ../utils

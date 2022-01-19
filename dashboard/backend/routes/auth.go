@@ -3,18 +3,16 @@ package routes
 import (
 	"cludus/db"
 	"cludus/utils"
-	"log"
+	"io/ioutil"
 	"net/http"
-    "github.com/imroc/req"
 )
 
 var config *utils.Config
+var discord_api_url string = "https://discord.com/api"
 
 func InitConfig() {
     config = utils.ReadConfig()
 }
-
-var discord_api_url string = "https://discord.com/api"
 
 func LoginHandler(_ *db.DBConnector) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
@@ -26,21 +24,35 @@ func CallbackHandler(dbc *db.DBConnector) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         r.ParseForm()
 
-        data := req.Param{
-                "client_id": config.ClientID,
-                "client_secret": config.ClientSecret,
-                "grant_type": "authorization_code",
-                "code": r.FormValue("code"),
-                "redirect_uri": config.RedirectURL,
+        form := map[string]string{
+            "client_id": config.ClientID,
+            "client_secret": config.ClientSecret,
+            "grant_type": "authorization_code",
+            "code": r.FormValue("code"),
+            "redirect_uri": config.RedirectURL,
         }
 
-        response, err := req.Post(discord_api_url + "/oauth2/token", data, r.Context())
+        req, err := utils.RequestWithFormData(
+            r.Context(),
+            "POST",
+            discord_api_url + "/oauth2/token",
+            form,
+        )
 
         if err != nil {
-            utils.WriteInternalServerError(w)
-            log.Println("Error while making request! - ", err)
+            utils.WriteInternalServerError(w, err)
+            return
         }
 
-        w.Write(response.Bytes())
+        resp, err := (&http.Client{}).Do(req)
+
+        if err != nil {
+            utils.WriteInternalServerError(w, err)
+            return
+        }
+
+        defer resp.Body.Close()
+        content, _ := ioutil.ReadAll(resp.Body)
+        w.Write(content)
     }
 }

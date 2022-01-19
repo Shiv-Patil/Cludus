@@ -2,12 +2,14 @@ package utils
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
 
 
-func WriteInternalServerError(w http.ResponseWriter) {
+func WriteInternalServerError(w http.ResponseWriter, err error) {
+    log.Println(err)
     w.WriteHeader(http.StatusInternalServerError)
     fmt.Fprintf(
         w,
