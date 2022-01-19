@@ -18,7 +18,7 @@ function getHelpPageContent(commands) {
     let overflowCommands = [];
     let pageString = "";
     for (let i = 0; i < commands.length; i++) {
-        const currentPageString = pageString + `<:ReplyOne:874501963893588019>[${commands[i].name}](https://umm.nothing.here)
+        const currentPageString = pageString + `<:ReplyOne:874501963893588019>[${commands[i].name}](https://krymzin.me)
 <:ReplyTwo:874502020554432543><:ReplyThree:874502075004907580>*${commands[i].description}*\n`;
 
         if (MAX_EMBED_SIZE <= currentPageString.length) {
