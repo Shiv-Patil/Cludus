@@ -38,7 +38,7 @@ func main() {
                     dbConnector := db.NewDBConnector(utils.ReadEnvVar("MONGO_URL"))
                     log.Println("Successfully connected to, and pinged DB")
 
-                    routes.AddRoutes(router, &dbConnector)
+                    routes.AddRoutes(router, dbConnector)
                     
                     port, found := os.LookupEnv("PORT")
                     if !found {
