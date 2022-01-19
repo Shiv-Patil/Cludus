@@ -15,6 +15,16 @@ DISCORD_CLIENT_TOKEN=
 CLIENT_ID=
 GUILD_ID=
 ```
+and create a `.env` file in `dashboard` and fill it out with -
+```env
+CLIENT_ID=
+CLIENT_SECRET=
+REDIRECT_URL=
+
+# Optional, only use if you are using a mongo db docker container
+MONGO_INITDB_ROOT_USERNAME=root
+MONGO_INITDB_ROOT_PASSWORD=password
+```
 
 ### With Docker-Compose
 
@@ -28,7 +38,7 @@ GUILD_ID=
 ```env
 DASHBOARD_URL=http://localhost:3000/
 ```
-5. Paste the following into `dashboard/.env` -
+5. Append the following into `dashboard/.env` -
 ```
 MONGO_URL=...
 ```
@@ -38,7 +48,7 @@ MONGO_URL=...
 ### With Docker
 
 3. Make sure you have Docker in your path.
-4. Paste the following into `dashboard/.env` -
+4. Append the following into `dashboard/.env` -
 ```
 MONGO_URL=...
 ```
@@ -46,7 +56,7 @@ MONGO_URL=...
 6. Run the dashboard with `docker run -d -p 3000:3000 cludus_dashboard`.
 7. Append the following to the `cludus/.env` file - 
 ```env
-DASHBOARD_URL=http://localhost:3000/
+DASHBOARD_URL=
 ```
 8. Build the bot with `cd cludus && docker build . -t cludus_bot && cd ..`.
 9. Run the bot with `cd cludus && docker run cludus_bot`.

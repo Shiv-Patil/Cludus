@@ -6,15 +6,16 @@ import (
 	"os"
 	"time"
 
+	"cludus/db"
 	"cludus/routes"
-    "cludus/db"
+	"cludus/utils"
 
+	_ "github.com/joho/godotenv/autoload"
 	"github.com/urfave/cli/v2"
-    _ "github.com/joho/godotenv/autoload"
 
-    "github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5"
+	chiMiddleware "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httprate"
-    chiMiddleware "github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
@@ -33,13 +34,8 @@ func main() {
                     router.Use(chiMiddleware.Recoverer)
                     router.Use(httprate.LimitByIP(1000, 1 * time.Minute))
 
-                    dbUri, found := os.LookupEnv("MONGO_URL")
 
-                    if !found {
-                        log.Fatal("Please specify and the Mongo DB url in an environment variable!")
-                    }
-
-                    dbConnector := db.NewDBConnector(dbUri)
+                    dbConnector := db.NewDBConnector(utils.ReadEnvVar("MONGO_URL"))
                     log.Println("Successfully connected to, and pinged DB")
 
                     routes.AddRoutes(router, &dbConnector)
