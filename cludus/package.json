@@ -16,6 +16,7 @@
     "scripts": {
         "dev": "NODE_ENV=development && nodemon ./main.js",
         "production": "NODE_ENV=production && node ./main.js",
+        "heroku": "NODE_ENV=development && node ./main.js",
         "deploy": "node ./deploy_commands.js"
     },
     "repository": {
