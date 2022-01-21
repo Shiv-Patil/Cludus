@@ -117,7 +117,7 @@ module.exports = new GenericCommand(
 
         collector.on("collect", async componentInteraction => {
             if (componentInteraction.user.id !== interaction.user.id) {
-                return await componentInteraction.reply({ content: "These options are not for you. ", ephemeral: true });
+                return await componentInteraction.reply({ content: "These options are not for you.", ephemeral: true });
             }
 
             switch (componentInteraction.customId) {

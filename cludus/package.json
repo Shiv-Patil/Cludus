@@ -6,6 +6,7 @@
         "discord-api-types": "^0.26.1",
         "discord.js": "^13.0.0",
         "dotenv": "^10.0.0",
+        "inkjs": "^2.0.0",
         "nodemon": "^2.0.15"
     },
     "name": "cludus",
