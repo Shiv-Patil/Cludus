@@ -11,10 +11,11 @@ import (
 )
 
 type DBConnector struct {
-    client *mongo.Client
+    Client *mongo.Client
+    Database string
 }
 
-func NewDBConnector(uri string) DBConnector {
+func NewDBConnector(uri string) *DBConnector {
     ctx, cancel := context.WithTimeout(context.Background(), 30 * time.Second)
     defer cancel()
     client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
@@ -30,9 +31,11 @@ func NewDBConnector(uri string) DBConnector {
         log.Fatalf("Error while pinging DB - %v\n", err.Error())
     }
 
-    return DBConnector{client}
+    dbc := &DBConnector{client, "cludusDB"}
+    InitDB(dbc)
+    return dbc
 }
 
 func (d *DBConnector) Close() {
-    d.client.Disconnect(context.Background())
+    d.Client.Disconnect(context.Background())
 }
