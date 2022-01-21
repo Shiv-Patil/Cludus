@@ -12,6 +12,9 @@
     "name": "cludus",
     "description": "A sci-fi rpg-based discord bot",
     "version": "0.1.0",
+    "engines": {
+        "node": "16.x"
+    },
     "main": "main.js",
     "scripts": {
         "dev": "NODE_ENV=development && nodemon ./main.js",
