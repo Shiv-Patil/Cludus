@@ -21,6 +21,7 @@ dashboard/frontend/build
 .env.development.local
 .env.test.local
 .env.production.local
+Procfile
 
 dashboard/frontend/npm-debug.log*
 dashboard/frontend/yarn-debug.log*
