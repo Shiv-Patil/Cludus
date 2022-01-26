@@ -1,91 +1,111 @@
-const { MessageActionRow, MessageSelectMenu, MessageButton, MessageEmbed } = require('discord.js');
 const { join } = require("path");
 var fs = require("fs");
+const Generator = require(join(
+    __dirname,
+    "..",
+    "..",
+    "utils",
+    "dialogue",
+    "gif_generator.js"
+));
 const Story = require("inkjs").Story;
 const GenericCommand = require(join("..", "..", "models", "generic_command"));
-const storyJSON = fs.readFileSync(join("dialogues", "test_story.json"), "UTF-8").replace(/^\uFEFF/, "");
-
-const continueButtonRow = new MessageActionRow()
-    .addComponents(
-        new MessageButton()
-            .setCustomId("continue")
-            .setLabel("Continue")
-            .setStyle("SECONDARY")
-    );
-
-function getChoiceRows(choices) {
-    rows = [];
-    for (let i = 0; i < choices.length; ++i) {
-        rows.push(new MessageActionRow()
-            .addComponents(
-                new MessageButton()
-                    .setCustomId(`${i}`)
-                    .setLabel(choices[i].text)
-                    .setStyle("SECONDARY")
-            )
-        );
-    }
-    return rows
-}
-
-function getDialogueEmbed(interaction, storyText) {
-    return new MessageEmbed()
-        .setTitle("Game")
-        .setDescription(storyText)
-        .setFooter({ text: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ dynamic: true }) });
-}
-
-function getDialogueAndChoices(interaction, story) {
-    if (!story.canContinue) return { embeds: [getDialogueEmbed(interaction, "The end.")], components: [] };
-    let text = story.Continue();
-    let components = [continueButtonRow];
-    if (story.currentChoices.length > 0) {
-        components = getChoiceRows(story.currentChoices);
-    }
-    return { embeds: [getDialogueEmbed(interaction, text)], components: components }
-}
+const { getDialogueAndChoices } = require(join(
+    __dirname,
+    "..",
+    "..",
+    "utils",
+    "dialogue",
+    "helper.js"
+));
+const storyJSON = fs
+    .readFileSync(join("dialogues", "test_story.json"), "UTF-8")
+    .replace(/^\uFEFF/, "");
 
 module.exports = new GenericCommand(
     async (client, interaction) => {
-        // if (!client.admins.includes(interaction.user.id)) {
-        //      return interaction.reply({
-        //         content: "Sorry, only bot admins can use this command (for now).",
-        //         ephemeral: true
-        //     });
-        //  }
+        //if (!client.admins.includes(interaction.user.id)) {
+        //    return interaction.reply({
+        //        content:
+        //            "Sorry, only bot admins can use this command (for now).",
+        //        ephemeral: true,
+        //    });
+        //}
 
         let inkStory = new Story(storyJSON);
-        
-        if (!inkStory.canContinue) return interaction.reply({
-            content: "No story available",
-            ephemeral: true
-        });
+        let generator = new Generator(client.assets.bg, client.assets.glyphs);
 
-        const { embeds, components } = getDialogueAndChoices(interaction, inkStory);
+        if (!inkStory.canContinue)
+            return interaction.reply({
+                content: "No story available",
+                ephemeral: true,
+            });
+
+        const { embeds, components, files } = getDialogueAndChoices(
+            interaction,
+            inkStory,
+            generator
+        );
 
         const message = await interaction.reply({
             embeds: embeds,
             components: components,
+            files: files,
             fetchReply: true,
         });
 
-        const collector = message.createMessageComponentCollector({ idle: 30000, dispose: true });
+        const collector = message.createMessageComponentCollector({
+            idle: 30000,
+            dispose: true,
+        });
 
-        collector.on("collect", async componentInteraction => {
+        let processing = false;
+        let index = 1; // Gif index
+
+        collector.on("collect", async (componentInteraction) => {
             if (componentInteraction.user.id !== interaction.user.id) {
-                return await componentInteraction.reply({ content: "These options are for another player.", ephemeral: true });
+                return await componentInteraction.reply({
+                    content: "These options are for another player.",
+                    ephemeral: true,
+                });
             }
+            if (processing) {
+                return await componentInteraction.reply({
+                    content: "Hold on a second, I'm processing your request!",
+                    ephemeral: true,
+                });
+            }
+            processing = true;
 
             if (componentInteraction.customId !== "continue") {
                 inkStory.ChooseChoiceIndex(+componentInteraction.customId);
             }
 
-            return componentInteraction.update(getDialogueAndChoices(interaction, inkStory));
+            const embedProps = getDialogueAndChoices(
+                interaction,
+                inkStory,
+                generator,
+                index++
+            );
+            try {
+                await message.edit({
+                    embeds: embedProps.embeds,
+                    components: embedProps.components,
+                    attachments: [],
+                    files: embedProps.files,
+                });
+            } catch (e) {
+                console.log(e);
+            }
+            await componentInteraction.update({});
+
+            processing = false;
         });
 
         collector.on("end", async (collected, reason) => {
             if (reason === "messageDelete") return true;
-            if (message.editable) message.edit({ components: [] });
+            if (message.editable)
+                message.edit({ components: [] }).catch(() => {});
         });
     },
     {
@@ -96,7 +116,6 @@ module.exports = new GenericCommand(
         cooldown: 15,
         cooldownMessage: (timeLeft) => {
             return `Please wait ${timeLeft} seconds before using this command again.`;
-        }
+        },
     }
-)
-
+);
