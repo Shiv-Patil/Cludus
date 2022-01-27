@@ -5,7 +5,9 @@ const Canvas = require("canvas");
 async function getBg(path) {
     const bgImg = await Canvas.loadImage(path);
     const bgCanvas = Canvas.createCanvas(bgImg.width, bgImg.height);
-    bgCanvas.getContext("2d", { alpha: false }).drawImage(bgImg, 0, 0);
+    const context = bgCanvas.getContext("2d", { alpha: false });
+    context.imageSmoothingEnabled = false;
+    context.drawImage(bgImg, 0, 0);
     return bgCanvas;
 }
 
@@ -14,7 +16,9 @@ async function getGlyphs(path) {
     for (glyphName in glyphs) {
         const glyph = await Canvas.loadImage(join(path, glyphName + ".png"));
         const glyphCanvas = Canvas.createCanvas(glyph.width, glyph.height);
-        glyphCanvas.getContext("2d").drawImage(glyph, 0, 0);
+        const context = glyphCanvas.getContext("2d");
+        context.imageSmoothingEnabled = false;
+        context.drawImage(glyph, 0, 0);
         glyphs[glyphName] = { ...glyphs[glyphName], glyph: glyphCanvas };
     }
     return glyphs;

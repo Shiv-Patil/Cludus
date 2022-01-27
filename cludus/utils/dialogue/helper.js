@@ -55,6 +55,7 @@ module.exports = {
                 embeds: [embed],
                 components: [],
                 files: [],
+                end: true,
             };
         }
         let text = story.Continue().split(":");

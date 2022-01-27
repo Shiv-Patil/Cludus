@@ -28,7 +28,7 @@ module.exports = class Generator extends EventEmitter {
         topBorder = 36,
         lineHeight = 14,
         wordSpacing = 10,
-        step = 3,
+        step = 2,
         endDelay = 2000
     ) {
         super();
@@ -50,7 +50,7 @@ module.exports = class Generator extends EventEmitter {
     getCanvasContext() {
         if (!this.context) {
             this.context = this.canvas.getContext("2d", { alpha: "false" });
-            // this.context.imageSmoothingEnabled = false;
+            this.context.imageSmoothingEnabled = false;
         }
         return this.context;
     }

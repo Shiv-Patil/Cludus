@@ -1,3 +1,4 @@
+const discord = require("discord.js");
 const { join } = require("path");
 var fs = require("fs");
 const Generator = require(join(
@@ -22,6 +23,18 @@ const storyJSON = fs
     .readFileSync(join("dialogues", "test_story.json"), "UTF-8")
     .replace(/^\uFEFF/, "");
 
+function startUsing(client, id) {
+    if (!client.storyUsers) {
+        client.storyUsers = new discord.Collection();
+    }
+    client.storyUsers.set(id, Date.now());
+}
+
+function stopUsing(client, id) {
+    if (!client.storyUsers) return;
+    client.storyUsers.delete(id);
+}
+
 module.exports = new GenericCommand(
     async (client, interaction) => {
         //if (!client.admins.includes(interaction.user.id)) {
@@ -31,6 +44,11 @@ module.exports = new GenericCommand(
         //        ephemeral: true,
         //    });
         //}
+        if (client.storyUsers && client.storyUsers.has(interaction.user.id))
+            return interaction.reply({
+                content: "You are already using this command",
+                ephemeral: true,
+            });
 
         let inkStory = new Story(storyJSON);
         let generator = new Generator(client.assets.bg, client.assets.glyphs);
@@ -58,6 +76,7 @@ module.exports = new GenericCommand(
             idle: 30000,
             dispose: true,
         });
+        startUsing(client, interaction.user.id);
 
         let processing = false;
         let index = 1; // Gif index
@@ -98,11 +117,12 @@ module.exports = new GenericCommand(
                 console.log(e);
             }
             await componentInteraction.update({});
-
+            if (embedProps.end) collector.stop("finish");
             processing = false;
         });
 
         collector.on("end", async (collected, reason) => {
+            stopUsing(client, interaction.user.id);
             if (reason === "messageDelete") return true;
             if (message.editable)
                 message.edit({ components: [] }).catch(() => {});
